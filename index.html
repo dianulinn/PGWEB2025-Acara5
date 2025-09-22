@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leaflet JS</title>
+    <title>Peta Flores Timur</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <style>
@@ -116,7 +116,7 @@
         map.getPane("paneJalan").style.zIndex = 401
         var jalan = L.geoJSON(null, {
             pane: 'paneJalan',
-            
+
             // Style
             style: function (feature) {
                 return {
@@ -208,6 +208,43 @@
             map.addLayer(jumlah_penduduk); // Menambahkan GeoJSON Polygon Jumlah Penduduk ke dalam peta
         });
 
+        // GeoJSON Polygon Batas Desa
+        map.createPane('paneBatasDesa');
+        map.getPane("paneBatasDesa").style.zIndex = 305;
+
+        var batas_desa = L.geoJSON(null, {
+            pane: 'paneBatasDesa',
+
+            // Style
+            style: function (feature) {
+                return {
+                    color: "black",
+                    opacity: 1,
+                    weight: 0.5,
+                    fillColor: "#ff0000",
+                    fillOpacity: 0,
+                };
+            },
+
+            // onEachFeature
+            onEachFeature: function (feature, layer) {
+                // variable popup content
+                layer.on({
+                    mouseover: function (e) {
+                        batas_desa.bindTooltip(feature.properties.WADMKD, {
+                            direction: "auto",
+                            sticky: true,
+                        });
+                    },
+                });
+            },
+        });
+
+        $.getJSON("Data/Batas_Desa.geojson", function (data) {
+            batas_desa.addData(data); // Menambahkan data ke dalam GeoJSON Polygon Jumlah Penduduk
+            map.addLayer(batas_desa); // Menambahkan GeoJSON Polygon Jumlah Penduduk ke dalam peta
+        });
+
         // Control Layer
         var baseMaps = {
             "OpenStreetMap": basemap,
@@ -216,6 +253,8 @@
         var overlayMaps = {
             "Toponimi": toponimi,
             "Jalan": jalan,
+            "Sungai": sungai,
+            "Batas Desa": batas_desa,
             "Jumlah Penduduk": jumlah_penduduk,
         };
 
